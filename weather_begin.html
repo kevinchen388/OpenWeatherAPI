@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Weather</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+	input{
+		margin: 10px 0px;
+		padding: 5px;
+	}
+	#forecast{
+		/*This div should not appear until the weather is returned.*/
+		display: none;
+	}
+	#forecast div{
+		width: 25vw;
+		border: 8px solid blue;
+		margin: 0 auto;
+		background: black;
+	}
+	img{
+		width:100%;
+	}
+</style>
+<script>
+    function gettingJSON(){
+    	console.log("Submit button clicked");
+		$("#forecast").css("display", "block");
+
+
+    	// You will need to update this query with the city, weather format (Celsius or Fahrenheit) and your OpenWeatherMap ID
+		var city = $("#location").val();
+		if (city == "") {
+			city = "Ann Arbor"
+		}
+		console.log(city);
+
+		var unit = $('input[name="temp"]');
+		var x = "imperial"
+		if (unit[0].checked) {
+			x = unit[0].value;
+		}
+		else if (unit[1].checked) {
+			x = unit[1].value;
+		}
+		console.log(x)
+
+    	// default = Ann Abor/Fahreheit.
+		let query = "http://api.openweathermap.org/data/2.5/weather?q=" + city + "&APPID=13bb029e20af481239469319684e47c6&units=" + x;
+        console.log("Query is :" + query)
+
+        $.getJSON(query,function(json){
+            console.log(JSON.stringify(json));
+
+			// Use the OpenWeather API to return:
+			// update location
+			$("#loc").text(city);
+			//  the current temperature
+			console.log(JSON.stringify(json.main.temp));
+			$("#temp").text(JSON.stringify(json.main.temp));
+			//  the high temperature for the day
+			console.log(JSON.stringify(json.main.temp_max))
+			$("#high").text(JSON.stringify(json.main.temp_max));
+			//  the low temperature for the day
+			console.log(JSON.stringify(json.main.temp_min))
+			$("#low").text(JSON.stringify(json.main.temp_min));
+			//  the icon for the current weather.
+			console.log(JSON.stringify(json.weather[0].icon))
+			var iconurl = "http://openweathermap.org/img/w/" + json.weather[0].icon + ".png";
+			console.log(iconurl)
+			$("#tempImg").attr('src', iconurl);
+
+    	})
+
+
+
+    }
+    </script>
+</head>
+<body>
+	<!-- DO NOT CHANGE ANY CODE IN THE BODY OF THIS FILE. -->
+	<label for ="location">City:</label><input type = "text" id = "location"><br>
+	<input type = "radio" name = "temp" value = "imperial" id = "fahrenheit"> <label for = "fahrenheit">Fahrenheit</label><br>
+	<input type = "radio" name = "temp" value = "metric" id = "celcius"> <label for = "celcius">Celcius</label><br>
+
+	<button id = "getIt" onclick = " gettingJSON()">Get Weather</button>
+
+
+	<div id = "forecast">
+		<div>
+		<img id = "tempImg" src="" alt = "" title = "">
+		</div>
+		<p>The temperature in <span id = "loc"></span> is currently <span id = "temp"></span>.</p>
+		<p>The high today will be <span id = "high"></span> and the low will be <span id = "low"></span>.</p>
+
+	</div>
+</body>
+</html>
